@@ -35,6 +35,23 @@ let eventSeen = {
   blessingForServant: false, //종을 위한 축복 해금
   truth: false, //진실 조우(앎 80%)
 };
+let events = [];
+
+// ==========================================
+// 🌟 3. 시스템 초기화 함수 (데이터 로드)
+// ==========================================
+async function initializeGame() {
+  try {
+    const response = await fetch("events.json");
+    events = await response.json();
+    console.log("데이터 로드 완료!", events);
+
+    // 데이터가 다 담긴 후에 진짜 게임 시작
+    startGame(true);
+  } catch (error) {
+    console.error("데이터를 불러오는 중 오류가 발생했습니다:", error);
+  }
+}
 
 // DOM Elements
 const elStory = document.getElementById("story-text"); //스토리 출력 UI
@@ -61,146 +78,6 @@ const vals = {
 };
 const elLevel = document.getElementById("level-display"); //현재위치 UI텍스트
 const elArtifactList = document.getElementById("artifact-list"); //보유 아티팩트 목록 UI
-
-const events = [
-  {
-    //이벤트 목록 (추가 필요)
-    id: "e1",
-    text: "거대한 눈동자는 자신을 용, '레비아탄'이라고 소개했다. 그것의 목소리가 어디에서 나오고 있는지는 알 길이 없었다. 내가 볼 수 있는 것이라곤 그것의 눈과 비늘 뿐일 만큼 엄청난 크기였다.\n\n'두려워하지 마라. 나는 아주 오랫동안 너를 그리워했어…….'\n\n레비아탄은 부드러운 목소리로 나를 안심시켰다. 그러나 그의 말이 진실인지에 관해선 알 길이 없었다. 과거가, 전혀 기억나지 않았다. 그는 믿을 만한 존재일까. 그는 무엇인가. 남는 것은 의문 뿐이다.\n\n입을 열어서 뱉은 첫 마디는…….",
-    choices: [
-      {
-        text: "나도 보고 싶었다고 말하자. 거짓말이지만.",
-        effects: { love: 15, humanity: -15 },
-        nextId: "e2",
-      },
-      {
-        text: "신뢰가 안 간다. 그의 말을 증명해달라고 말하자.",
-        effects: { awe: -15, humanity: 15 },
-        nextId: "e3",
-      },
-    ],
-  },
-  {
-    id: "e2",
-    text: "실험실 한구석에서 출처를 알 수 없는 낡은 스팀펑크 장치를 발견했습니다. 복잡한 구조가 호기심을 자극합니다.",
-    choices: [
-      {
-        text: "구조를 조심스럽게 분해하며 원리를 파악한다.",
-        effects: { gnosis: 20, awe: -15, love: -5 },
-      },
-      {
-        text: "위험할지 모르니 레비아탄에게 가져가 바친다.",
-        effects: { love: 15, gnosis: -15 },
-      },
-    ],
-  },
-  {
-    id: "e3",
-    text: "정원의 인공 태양이 지고 어둠이 찾아왔습니다. 온실 밖, 닿을 수 없는 바깥 세상의 풍경이 흐릿하게 보입니다.",
-    choices: [
-      {
-        text: "자유를 갈망하며 바깥 풍경에서 눈을 떼지 못한다.",
-        effects: { humanity: 20, love: -15 },
-      },
-      {
-        text: "창조주가 마련해준 이 정원의 완벽함에 감탄한다.",
-        effects: { awe: 15, gnosis: 5 },
-      },
-    ],
-  },
-  {
-    id: "e4",
-    text: "레비아탄이 기분이 좋은 듯 낮게 그르렁거리며 당신의 머리칼을 거대한 발톱으로 쓰다듬습니다.",
-    choices: [
-      {
-        text: "그의 비늘 구조와 마력의 흐름을 관찰한다.",
-        effects: { gnosis: 15, love: -20 },
-      },
-      {
-        text: "그의 손길에 몸을 맡기고 온기를 느낀다.",
-        effects: { love: 15, humanity: -15 },
-      },
-      {
-        text: "감히 움직이지 못하고 숨을 죽인다.",
-        effects: { awe: 20, humanity: -10 },
-      },
-    ],
-  },
-  {
-    id: "e5",
-    text: "당신의 팔에 이식된 톱니바퀴 장치에서 덜그럭거리는 소리가 납니다. 수리가 필요한 것 같습니다.",
-    choices: [
-      {
-        text: "스스로 도구를 찾아 기계 팔을 수리한다.",
-        effects: { gnosis: 15, awe: -10 },
-      },
-      {
-        text: "아픔을 느끼며 기계가 아닌 온전한 몸을 원한다.",
-        effects: { humanity: 15, awe: -20 },
-      },
-    ],
-  },
-  {
-    id: "e6",
-    text: "레비아탄이 알 수 없는 고대어로 중얼거립니다. 그 소리는 당신의 뇌리를 강하게 때립니다.",
-    choices: [
-      {
-        text: "그 지식을 받아들여 해석을 시도한다.",
-        effects: { gnosis: 25, love: -25 },
-      },
-      {
-        text: "창조주의 웅장한 목소리에 경외감을 느낀다.",
-        effects: { awe: 25, humanity: -20 },
-      },
-    ],
-  },
-];
-
-const catacombEvents = [
-  {
-    //지하묘지 이벤트 목록(추가 필요)
-    id: "c1",
-    text: "[지하묘지] 에녹이 구석에서 빛바랜 설계도를 꺼내 보여줍니다. 인간성과 앎을 결합하는 실험의 흔적입니다.",
-    choices: [
-      {
-        text: "설계도의 원리를 에녹과 함께 분석한다.",
-        effects: { gnosis: 20, love: -5 },
-      },
-      {
-        text: "인간성의 본질에 대해 에녹과 토론한다.",
-        effects: { humanity: 20, awe: -5 },
-      },
-    ],
-  },
-  {
-    id: "c2",
-    text: "[지하묘지] 에녹은 바깥 세상에서 가져온 작은 씨앗을 돌보고 있습니다. 척박한 환경 속 진짜 생명입니다.",
-    choices: [
-      {
-        text: "씨앗이 싹트기를 바라며 애정을 쏟는다.",
-        effects: { humanity: 20, awe: -10 },
-      },
-      {
-        text: "이 연약한 생명이 살아남을 수칙을 계산한다.",
-        effects: { gnosis: 15, love: -10 },
-      },
-    ],
-  },
-  {
-    id: "c3",
-    text: "[지하묘지] 에녹이 낡은 축음기를 작동시킵니다. 기계음이 섞인 쓸쓸한 음악이 묘지를 채웁니다.",
-    choices: [
-      {
-        text: "음악에 담긴 바깥 세상의 슬픔을 공감한다.",
-        effects: { humanity: 15, love: -10 },
-      },
-      {
-        text: "축음기의 구동 원리와 주파수를 기록한다.",
-        effects: { gnosis: 20, awe: -5 },
-      },
-    ],
-  },
-];
 
 function addLog(message, isSystem = false) {
   //로그를 추가한다
@@ -384,17 +261,17 @@ function checkTriggersAndGameOver() {
   }
 
   if (stats.love === 0) {
-    overReason = "폐기 (Discarded)";
+    overReason = "엔딩 0: 호문쿨루스 폐기";
     overDesc =
-      "레비아탄의 흥미가 식었습니다. 당신은 가치를 잃고 차가운 바닥에 버려졌습니다.";
-  } else if (aweGameOverTrigger && stats.love < 50) {
-    overReason = "공포에 잠식됨 (Consumed by Fear)";
+      "레비아탄의 눈동자에 더는 따스함이 남아 있지 않다.\n그는 내가 쓸모 없다고 말했다.\n그 이후는 기억나지 않는다.";
+  } else if (aweGameOverTrigger && stats.love < 60) {
+    overReason = "엔딩 6: 이성 붕괴";
     overDesc =
-      "레비아탄의 거대한 그림자 앞에서 숨이 멎을 듯한 공포에 잡아먹혀 정신이 붕괴되었습니다.";
+      "거대한레비아탄의그림자가나를덮어삼킨다……나는그것이두려워견딜수가없다……나는그의금색눈동자에빠져질식할것이분명하다그의단단한이빨을내가어찌감당할수있겠는가그누구도그것을낚싯바늘로낚지못하리그것의견고한비늘을뚫을자이세상에없다 나는아무것도 생각하지 않는다 나는 아무것도 아니다";
   } else if (stats.humanity === 0 || stats.love === 100 || aweGameOverTrigger) {
-    overReason = "충실한 인형 (Faithful Doll)";
+    overReason = "엔딩 1: 완벽한 피조물!";
     overDesc =
-      "자아를 잃어버렸습니다. 당신은 이제 레비아탄을 위한 완벽하고 아름다운 인형일 뿐입니다.";
+      "나는 생각하는 것을 관두기로 했다.\n그것은 압도적으로 행복하다.\n레비아탄은 나를 사랑한다.\n레비아탄은 나를 사랑한다!";
   }
 
   if (overReason) {
@@ -541,15 +418,15 @@ function handleEnding() {
   // 3번 엔딩 (진실 확인 완료, 사랑<50, 경외<50, 인간성>=60)
   if (truthSeen && stats.love < 50 && stats.awe < 50 && stats.humanity >= 60) {
     elStory.innerText +=
-      "\n\nNPC 에녹과 함께 레비아탄의 모형정원을 탈출할 기회가 생겼습니다. 어떻게 하시겠습니까?";
+      "\n\n에녹과 함께 레비아탄의 모형정원을 탈출할 기회가 생겼습니다. 어떻게 하시겠습니까?";
     createEndingChoice(
       "레비아탄을 버리고 떠난다.",
       "엔딩 3: 모형정원 탈출",
-      "NPC 에녹과 함께 레비아탄의 모형정원을 탈출합니다.",
+      "에녹과 함께 레비아탄의 모형정원을 탈출합니다.",
     );
     createEndingChoice(
       "모형정원에 머무른다.",
-      "엔딩 0: 폐기",
+      "엔딩 0: 호문쿨루스 폐기",
       "오리진을 충분히 닮지 못한 괘씸한 존재로 판단, 레비아탄에 의해 폐기됩니다.",
     );
     return;
@@ -558,16 +435,16 @@ function handleEnding() {
   // 4번 엔딩 (진실 확인 완료, 사랑>=50 OR 경외>=50)
   if (truthSeen && (stats.love >= 50 || stats.awe >= 50)) {
     elStory.innerText +=
-      "\n\nNPC 에녹의 희생을 통해 레비아탄의 모형정원을 탈출할 기회를 얻었습니다. 어떻게 하시겠습니까?";
+      "\n\n에녹의 희생을 통해 레비아탄의 모형정원을 탈출할 기회를 얻었습니다. 어떻게 하시겠습니까?";
     createEndingChoice(
       "탈출한다.",
       "엔딩 4: 희생과 탈출",
-      "NPC 에녹의 희생을 딛고 레비아탄의 모형정원을 탈출합니다.",
+      "에녹의 희생을 딛고 레비아탄의 모형정원을 탈출합니다.",
     );
     createEndingChoice(
       "머무른다.",
-      "엔딩 1: 충실한 인형",
-      "자아를 잃고, 레비아탄의 충실한 총애 대상이 됩니다.",
+      "엔딩 1: 완벽한 피조물!",
+      "나는 생각하는 것을 관두기로 했다.\n그것은 압도적으로 행복하다.\n레비아탄은 나를 사랑한다.\n레비아탄은 나를 사랑한다!",
     );
     return;
   }
@@ -575,8 +452,8 @@ function handleEnding() {
   // 2번 엔딩 (사랑 80+, 인간성 70+)
   if (stats.love >= 80 && stats.humanity >= 70) {
     triggerGameOver(
-      "엔딩 2: 새로운 애착",
-      "‘오리진’을 뛰어넘어, 레비아탄의 새로운 애착 대상이 됩니다.",
+      "엔딩 2: 시절인연",
+      "레비아탄은 *나*를 사랑한다.\n그건 불변하는 사실이다.",
     );
     return;
   }
@@ -584,8 +461,8 @@ function handleEnding() {
   // 1번 엔딩 ((사랑 80+ OR 경외 80+) AND 인간성 < 70)
   if ((stats.love >= 80 || stats.awe >= 80) && stats.humanity < 70) {
     triggerGameOver(
-      "엔딩 1: 충실한 인형",
-      "자아를 잃고, 레비아탄의 충실한 총애 대상이 됩니다.",
+      "엔딩 1: 완벽한 피조물!",
+      "나는 생각하는 것을 관두기로 했다.\n그것은 압도적으로 행복하다.\n레비아탄은 나를 사랑한다.\n레비아탄은 나를 사랑한다!",
     );
     return;
   }
@@ -593,16 +470,16 @@ function handleEnding() {
   // 0번 엔딩 (인간성만 높고 레비아탄을 향한 감정이 없을 때)
   if (stats.humanity >= 70 && stats.love < 50 && stats.awe < 50) {
     triggerGameOver(
-      "엔딩 0: 폐기",
-      "오리진을 충분히 닮지 못한 괘씸한 존재로 판단, 레비아탄에 의해 폐기됩니다.",
+      "엔딩 0: 호문쿨루스 폐기",
+      "레비아탄을 사랑하지 않는 인간은 가치가 없다.",
     );
     return;
   }
 
   // 5번 엔딩 (조건 미달 기본 엔딩 - 어중간하게 생존했을 때)
   triggerGameOver(
-    "엔딩 5: 잊혀진 장난감",
-    "레비아탄은 새로운 호문쿨루스를 만들고 그것에 푹 빠져 있습니다. 당신은 잊히거나 곧 폐기될 것입니다.",
+    "엔딩 5: 실험의 실패",
+    "레비아탄은 나에게 만족하지 못했다. 나는 버려졌다.\n조금 더 그의 마음에 들지 않으면, 조금 더 강해지지 않으면…….",
   );
 }
 
@@ -679,10 +556,10 @@ function renderEvent(eventId) {
     eventSeen.catacombs = true;
     ev = {
       id: "sp_enoch",
-      text: "[플롯: 에녹 조우] 자신과 똑같이 생긴 인물을 만난다. 그는 자신을 '에녹'이라고 소개하며, '죽지 않은 너의 동족'이라고 말한다. 그는 자신이 이 모형정원의 진실을 알고 있다고 소개한다.",
+      text: "어느 날, 모형 정원의 바닥에 나있는 특이한 문양을 발견했다. 툭툭 건드리면 아무 반응이 없었지만, 위쪽으로 잡아당기니 삐걱거리며 그 자리가 들려 올라갔다. 바닥에 나있는 문이었다. 아래로는 사다리가 이어져 있었다.\n\n조심스럽게 아래로 내려가는 도중 인기척이 들렸다. 그곳에는 반쯤 망가져서, 대체 기능할 수는 있는 건가 싶은 인간이 있었다.\n\n'내 이름은 에녹이야. 유일하게 살아남은 너의 동족이지.'\n\n그러고 보니 그의 얼굴은, 언젠가 거울 속에서 봤던 내 얼굴과 완전히 똑같이 생겼다.\n\n'몰랐어? 너도, 나도 레비아탄에 의해 만들어진 존재잖아. 보아하니 넌 그에게 충분히 사랑받고 있나보지. 하지만 그것도 잠깐이야. 금방 레비아탄은 너에게 질려버리고, 널 버릴 거야.'\n\n'난 그때 겨우 도망쳤어. 반쯤 망가진 채 이 지하묘지에 몸을 숨기는 것 말고는 할 수 있는 게 없었지만, 그래도 살아있다는 점에서 다른 동족들보단 사정이 나을지도 모르지.'\n\n자신을 에녹이라 소개한 그는 입가를 비틀어 웃음을 지어보이며, 낡은 책 한 권을 내밀었다.\n\n'레비아탄의 초기 연구 노트야. 여기에 버려두었더군. 그 도마뱀이 뭘 하고 있는지, 우리가 누구인지. 내 말을 조금 더 정확히 알아듣고 싶다면 그 책을 읽어 보도록 해.'",
       choices: [
         {
-          text: "그의 말에 귀를 기울이고 에녹의 서를 받는다.",
+          text: "그가 내민 에녹의 서를 받는다.",
           effects: { gnosis: 10, humanity: 10 },
           unlock: "bookOfEnoch",
           action: () => {
@@ -753,7 +630,7 @@ function renderEvent(eventId) {
     locationTurns = 0;
     ev = {
       id: "move_down",
-      text: "[이동 기회] 레비아탄이 외출을 위해 잠시 자리를 비웠습니다. 모형정원 구석에 숨겨진 지하묘지로 내려갈 수 있습니다.",
+      text: "레비아탄이 잠시 자리를 비웠다. 그의 눈을 피해 모형정원 구석에 숨겨진 지하묘지로 내려갈 수 있는 기회다.",
       choices: [
         {
           text: "지하묘지로 몰래 내려간다.",
@@ -774,7 +651,7 @@ function renderEvent(eventId) {
     locationTurns = 0;
     ev = {
       id: "move_up",
-      text: "[이동 기회] 위쪽 모형정원에서 레비아탄이 당신을 부르는 소리가 들립니다.",
+      text: "위쪽 모형정원에서 레비아탄이 나를 불렀다. 다시 나를 보고 싶어진 게 분명하다.",
       choices: [
         {
           text: "부름에 응해 모형정원으로 올라간다.",
@@ -796,11 +673,18 @@ function renderEvent(eventId) {
   }
 
   // Normal Event Pool Selection (랜덤 뽑기)
-  let pool = currentLevel === "지하묘지" ? catacombEvents : events;
+  // 💡 1. 전체 이벤트 중에서 현재 장소(currentLevel)와 일치하는 이벤트만 1차로 걸러냅니다.
+  let pool = events.filter((e) => e.location === currentLevel);
 
-  let filteredPool = pool.filter((e) => e.id !== lastEventId);
-  if (filteredPool.length === 0) filteredPool = pool;
+  // 💡 2. 그 장소 이벤트들 중에서 하위 이벤트(isSub)와 방금 본 이벤트를 2차로 제외합니다.
+  let filteredPool = pool.filter((e) => !e.isSub && e.id !== lastEventId);
 
+  // 만약 필터링했더니 0개가 남았다면, 중복 제한만 풀고 다시 뽑습니다.
+  if (filteredPool.length === 0) {
+    filteredPool = pool.filter((e) => !e.isSub);
+  }
+
+  // 안전하게 걸러진 풀 안에서 무작위 이벤트 하나를 고릅니다.
   ev = filteredPool[Math.floor(Math.random() * filteredPool.length)];
   lastEventId = ev.id;
 
@@ -809,8 +693,6 @@ function renderEvent(eventId) {
 
 //게임  시작/재시작 로직, 인트로 설정 (완료)
 function showIntro() {
-  elTurn.innerText = "System Booting...";
-
   elStory.innerHTML = `
     <p>그곳은 형언할 수 없는 색의 증기를 뿜어대는 증기 기관으로 가득 차있는 방이었다. 익숙한 향이 났지만 나는 그 정체를 모른다. 창문 너머로는 샛노란 하늘이 펼쳐져 있다. 나는 하늘의 색을 알고 있었나? <br><br>아, 그건 하늘이 아니다. 검게 갈라진 틈이 움직인다. 그것은 용의 눈동자였다. 세로로 찢어진 동공이 이쪽을 바라보고 있다.</p>
   `;
@@ -823,7 +705,9 @@ function showIntro() {
 
   // 플레이어가 버튼을 눌렀을 때 비로소 1턴이 시작되도록 설정
   startBtn.onclick = () => {
-    addLog("눈을 떠 모형정원의 빛을 마주합니다.");
+    addLog(
+      "일부 텍스트가 폴리싱되지 않은 데모 버전입니다! 플레이에 참고 부탁드립니다. 감사합니다.",
+    );
     renderEvent("e1"); // 여기서 진짜 1턴 화면을 그립니다!
   };
 
@@ -882,14 +766,14 @@ function startGame(inherit = true) {
   } else {
     gnosis = savedGnosis;
     addLog(`이전 생애의 기억(앎 ${gnosis})을 일부 가진 채로 눈을 뜹니다.`);
-    renderEvent(); // 다회차면 인트로 없이 바로 1턴 띄우기
+    showIntro();
   }
 
   updateUI();
 }
 
 // Start the game on load
-window.onload = () => startGame(true);
+window.onload = () => initializeGame();
 
 window.hardReset = function () {
   // 1. 로컬 스토리지에 저장된 계승 데이터를 완벽하게 삭제
