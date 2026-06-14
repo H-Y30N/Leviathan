@@ -1,0 +1,542 @@
+/* =========================================
+   1. 폰트 불러오기
+   ========================================= */
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Emblema+One&display=swap");
+
+/* =========================================
+   2. 전역 설정 및 뼈대 레이아웃 (사용자 커스텀 유지)
+   ========================================= */
+body {
+  box-sizing: border-box;
+  background-repeat: no-repeat;
+  background: none;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0), rgba(255, 255, 255, 0.5)),
+    url("img/bg.png") no-repeat center center / cover;
+  color: #e0dada;
+  font-family: "IBM Plex Sans KR", sans-serif;
+  margin: 0;
+  overflow: hidden;
+
+  /* 화면 중앙 정렬 레이아웃 */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+h1 {
+  font-family: "Emblema One", system-ui;
+  letter-spacing: -0.1em;
+  font-size: 2rem;
+  color: #ffffff;
+  margin: 0;
+}
+
+h2,
+.serif {
+  font-family: "IBM Plex Sans KR", sans-serif;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.frame-layout {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+/* 게임 화면을 담는 가장 큰 박스 (가이드 추가분) */
+.main-layout {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+/* PC 화면에서는 좌우 분할 */
+@media (min-width: 768px) {
+  .main-layout {
+    flex-direction: row;
+  }
+}
+
+/* 좌우 패널 분할 (가이드 추가분) */
+.panel-left {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.panel-right {
+  margin-right: 0px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .panel-left {
+    width: 70%;
+  }
+  .panel-right {
+    width: 30%;
+  }
+}
+
+/* =========================================
+   3. 테마 및 색상 유틸리티 (사용자 커스텀 고정)
+   ========================================= */
+.brass-border {
+  border: 2px solid #000000;
+  box-shadow:
+    0 0 10px rgba(139, 109, 67, 0.2),
+    inset 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+.brass-text {
+  color: #dbd6cf;
+}
+
+.panel-bg {
+  border-radius: 8px; /* 약간의 둥근 모서리 추가 */
+}
+
+/* =========================================
+   4. 버튼 스타일링 (사용자 커스텀 + 레이아웃 보완)
+   ========================================= */
+.btn-choice {
+  background: url("img/panel.png") no-repeat center center / cover;
+
+  border: 2px solid #ff6898;
+  color: #dbd6cf;
+  transition: all 0.2s ease;
+
+  /* 버튼 형태 유지를 위한 레이아웃 추가 */
+  display: block;
+  width: 100%;
+  padding: 16px;
+  text-align: left;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.btn-choice:hover {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0), rgba(140, 143, 119, 0.5)),
+    url("img/panel.png") no-repeat center center / cover;
+
+  border: 2px solid #ff6898;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.btn-intro-choice {
+  color: #d3cccc;
+
+  background-repeat: no-repeat;
+  background: none;
+  background: url("img/panel.png") no-repeat center center / cover;
+
+  border: 2px solid #ff6898;
+  transition: all 0.2s ease;
+  width: fit-content;
+  min-width: 200px;
+  padding: 10px 20px;
+  margin: 30px auto;
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.btn-intro-choice:hover {
+  color: #d3cccc;
+
+  background-repeat: no-repeat;
+  background: none;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0), rgba(140, 143, 119, 0.5)),
+    url("img/panel.png") no-repeat center center / cover;
+
+  border: 2px solid #ff6898;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  width: fit-content;
+  min-width: 200px;
+  padding: 10px 20px;
+  margin: 30px auto;
+  display: block;
+}
+
+/* =========================================
+   5. 진행도 및 스탯 바 (사용자 커스텀 고정)
+   ========================================= */
+
+.stat-bar-bg {
+  flex-grow: 1;
+  background-color: #323232;
+  border: 2px solid #736b6b;
+  border-radius: 4px;
+  overflow: hidden;
+  height: 14px;
+  width: 18rem;
+}
+
+.stat-bar-fill {
+  width: 60px; /* 숫자(100/100)가 들어갈 공간 고정 */
+  text-align: right; /* 숫자가 오른쪽 끝에 깔끔하게 맞도록 우측 정렬 */
+  height: 100%;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat-value-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 0;
+  left: 0;
+  font-size: 0.8rem;
+  line-height: 1.25rem;
+  color: #fff;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.bg-love {
+  background: #dc6e8f;
+}
+.bg-humanity {
+  background: #62b088;
+}
+.bg-awe {
+  background: #9e82c4;
+}
+.bg-gnosis {
+  background: #bfba96;
+}
+.bg-progress {
+  background: #c5c5c5;
+}
+
+/* =========================================
+   6. 스크롤바 (사용자 커스텀 고정)
+   ========================================= */
+#log-container::-webkit-scrollbar,
+.story-text::-webkit-scrollbar {
+  width: 8px;
+}
+#log-container::-webkit-scrollbar-track,
+.story-text::-webkit-scrollbar-track {
+  background-color: #16161640;
+}
+#log-container::-webkit-scrollbar-thumb,
+.story-text::-webkit-scrollbar-thumb {
+  background: #b06785;
+  border-radius: 4px;
+}
+
+/* =========================================
+   7. 상세 레이아웃 및 텍스트 (가이드 추가분 병합)
+   ========================================= */
+
+/* 헤더 영역 */
+.header-panel {
+  z-index: -50;
+  background-repeat: no-repeat;
+  background: none;
+  background: url("img/header.png") no-repeat center center / contain;
+  background-position: center top;
+  position: fixed;
+  top: 0; /* 화면 맨 위에 고정 */
+  left: 0; /* 화면 왼쪽에 맞춤 */
+  width: 40%;
+  height: 20%;
+  padding: 20px;
+  padding-left: 50px;
+  padding-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header-subtext {
+  font-size: 14px;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+.header-turn {
+  font-size: 0.9rem;
+  color: #ffee98;
+  text-align: right;
+}
+
+/* 스토리 영역 */
+.story-panel {
+  background-repeat: no-repeat;
+  background: none;
+  background: url("img/story.png") no-repeat center center / cover;
+  overflow: hidden;
+  min-height: 380px;
+  max-height: 380px;
+  width: 80%;
+  margin-left: 10%;
+  margin-top: 12%;
+  padding: 20px;
+  flex-grow: 1.8;
+  display: flex;
+}
+.story-text {
+  height: 80%;
+  font-size: 1rem;
+  line-height: 1.8;
+  overflow-y: scroll;
+  padding-left: 10px;
+  padding-top: 32px;
+  padding-right: 120px;
+  flex-grow: 1;
+}
+.choices-container {
+  min-height: 0;
+  min-width: 90%;
+  overflow: hidden;
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 0.8;
+
+  position: absolute;
+  bottom: 5%;
+}
+
+/* 게임 오버 스크린 */
+.game-over-screen {
+  min-height: 0;
+  min-width: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  text-align: center;
+  z-index: 10;
+}
+.game-over-screen.hidden {
+  display: none;
+}
+.go-title {
+  font-size: 36px;
+  margin-bottom: 16px;
+  color: #bea37d;
+}
+.go-desc {
+  font-size: 18px;
+  margin-bottom: 32px;
+}
+.go-buttons {
+  display: flex;
+  gap: 16px;
+}
+.btn-large {
+  min-width: 160px;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+}
+.text-red {
+  color: #c03a4c !important;
+}
+
+.artifact-box {
+  overflow: hidden;
+  min-height: 0;
+  min-width: 0;
+  width: 50%;
+  padding: 20px;
+  margin-right: 6%;
+  /* 1. 너비를 강제로 픽셀(px) 단위로 고정합니다. (원하는 크기에 맞춰 숫자 조절) */
+  width: 150px;
+  min-width: 150px; /* 절대 이보다 줄어들지 않음 */
+  max-width: 150px; /* 절대 이보다 늘어나지 않음 */
+
+  /* 2. Flexbox 환경에서 부모가 좁아져도 자기 크기를 포기하지 않게 방어 */
+  flex-shrink: 0;
+
+  /* 3. 혹시나 아티팩트 이름이 너비보다 길어질 경우를 대비한 안전장치 */
+  word-break: keep-all; /* 단어 단위로 깔끔하게 줄바꿈 */
+  overflow-wrap: break-word; /* 정 안 되면 글자를 쪼개서라도 줄바꿈 (박스 뚫고 나감 방지) */
+}
+
+/* 우측 상태창 및 로그 */
+.status-panel {
+  background-repeat: no-repeat;
+  background: none;
+  background: url("img/panel.png") no-repeat center center / cover;
+  overflow: hidden;
+  min-height: 0;
+  min-width: 0;
+  width: 50%;
+  padding: 20px;
+  margin-right: 6%;
+}
+.panel-title {
+  font-size: 20px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #919191;
+  padding-bottom: 8px;
+}
+.stat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* 💡 수정됨: 글씨 크기가 달라도 상하 중앙으로 완벽하게 맞춥니다 */
+  font-size: 14px;
+  line-height: 1; /* 텍스트 위아래 숨겨진 기본 여백 제거 */
+}
+
+.progress-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: absolute;
+  top: 2%;
+  left: 0%;
+
+  text-shadow: 1px 2px 2px #000;
+}
+.artifact-panel {
+  overflow: hidden;
+  margin-top: 24px;
+  border-top: 1px solid #919191;
+  padding-top: 16px;
+}
+.artifact-title {
+  font-size: 16px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #919191;
+  padding: 8px;
+}
+.artifact-list {
+  font-size: 14px;
+  color: #b0b0b0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.text-gray-400 {
+  color: #9ca3af;
+}
+.text-gray-600 {
+  color: #777;
+}
+.italic {
+  font-style: italic;
+}
+
+.log-panel {
+  background-repeat: no-repeat;
+  background: none;
+  background: url("img/panel.png") no-repeat center center / cover;
+  min-height: 0;
+  min-width: 0;
+  flex: 2;
+  padding: 20px;
+  margin-left: 10%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: 30%;
+}
+.log-title {
+  font-size: 18px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #919191;
+  padding-bottom: 8px;
+}
+.log-container {
+  overflow: hidden;
+  flex-grow: 1;
+  overflow-y: scroll;
+  font-size: 14px;
+  padding-right: 8px;
+  margin-bottom: 16px;
+  color: #b0b0b0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.low-container {
+  height: 10%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  overflow: hidden;
+}
+
+/* 스탯 한 줄을 담는 가로 박스 */
+.stat-row {
+  display: flex;
+  flex-direction: row; /* 가로 정렬의 핵심 */
+  align-items: center; /* 텍스트와 바의 세로 중앙선을 완벽하게 맞춤 */
+  gap: 12px; /* 요소들 사이의 간격 */
+  margin-bottom: 12px;
+}
+
+/* 왼쪽 스탯 이름 영역 */
+.stat-label {
+  width: 120px; /* '인간성 (Humanity)' 처럼 긴 글자에 맞춰 너비 고정 */
+  flex-shrink: 0; /* 화면이 좁아져도 글씨 영역이 찌그러지지 않게 보호 */
+  font-size: 14px;
+}
+
+.prog-label {
+  width: 40px;
+  flex-shrink: 0;
+  font-size: 14px;
+  color: #000;
+}
+
+.portrait-container {
+  z-index: -50;
+  position: absolute;
+  right: 0;
+  min-height: 100%;
+  min-width: 60%;
+}
+
+.portrait-lev {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background: none;
+  background: url("img/img.png") no-repeat center center / cover;
+}
+
+.portrait-enoch {
+  background-repeat: no-repeat;
+  background: none;
+  background: url("img/test.png") no-repeat center center / cover;
+}

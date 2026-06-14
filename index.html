@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leviathan's Garden</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body> 
+    <!-- 메인 레이아웃 래퍼 -->
+    <div class="main-layout">
+      <!-- ================= Left Panel: Story & Choices ================= -->
+      <div class="panel-left">
+        <!-- Header -->
+        <div class="header-panel">
+          <div>
+            <h1></h1>
+            <div class="low-container">
+              <div class="header-subtext">
+                위치:
+                <span id="level-display" class="brass-text font-bold"
+                  >모형정원</span
+                ><br />
+                Turn: <span id="turn-display" class="header-turn">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Story View -->
+        <div class="story-panel brass-border panel-bg">
+          <!-- Character Portraits -->
+          <!-- Story Text -->
+
+          <div class="artifact-box">
+            <!-- Artifact Panel -->
+              <h2 class="artifact-title serif brass-text">보유 아티팩트</h2>
+              <div id="artifact-list" class="artifact-list">
+                <span class="italic text-gray-600"
+                  >보유한 아티팩트가 없습니다.</span
+                >
+            </div>
+          </div>
+
+          <div id="story-text" class="story-text serif"></div>
+
+          <!-- Game Over Overlay -->
+          <div id="game-over-screen" class="game-over-screen hidden">
+            <h2 class="go-title serif brass-text" id="go-title">GAME OVER</h2>
+            <p>완전히 초기화 후 재시작을 원한다면 F5(새로고침)를 눌러주세요.</p>
+            <br /><br />
+            <p class="go-desc" id="go-desc">이유</p>
+
+            <div class="go-buttons">
+              <button
+                onclick="startGame(true)"
+                class="btn-choice btn-large brass-text rounded-sm"
+              >
+                다시 태어나기
+              </button>
+
+              <button
+                onclick="hardReset()"
+                class="btn-choice btn-large brass-text rounded-sm text-red"
+              >
+                게임 초기화
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Log Panel -->
+        <div class="low-container">
+          <div class="panel-log log-panel brass-border panel-bg">
+            <h2 class="log-title serif brass-text">SYSTEM LOG</h2>
+            <div id="log-container" class="log-container">
+              <!-- Logs injected here -->
+            </div>
+          </div>
+
+          <!--Status Panel-->
+          <div class="status-panel brass-border panel-bg">
+            <div class="stat-list">
+              <h2 class="log-title serif brass-text">STATUS</h2>
+              <!-- Love -->
+              <div>
+                <div class="stat-header stat-row">
+                  <div class="stat-label"><span>사랑 (Love)</span></div>
+                  <div class="stat-bar-bg">
+                    <div
+                      id="bar-love"
+                      class="stat-bar-fill bg-love"
+                      style="width: 30%"
+                    ></div>
+                  </div>
+                  <span id="val-love">30/100</span>
+                </div>
+              </div>
+
+              <!-- Humanity -->
+              <div>
+                <div class="stat-header stat-row">
+                  <div class="stat-label"><span>인간성 (Humanity)</span></div>
+                  <div class="stat-bar-bg">
+                    <div
+                      id="bar-humanity"
+                      class="stat-bar-fill bg-humanity"
+                      style="width: 50%"
+                    ></div>
+                  </div>
+                  <span id="val-humanity">50/100</span>
+                </div>
+              </div>
+
+              <!-- Awe -->
+              <div>
+                <div class="stat-header stat-row">
+                  <div class="stat-label"><span>경외 (Awe)</span></div>
+                  <div class="stat-bar-bg">
+                    <div
+                      id="bar-awe"
+                      class="stat-bar-fill bg-awe"
+                      style="width: 50%"
+                    ></div>
+                  </div>
+                  <span id="val-awe">50/100</span>
+                </div>
+              </div>
+
+              <!-- Gnosis -->
+              <div>
+                <div class="stat-header stat-row">
+                  <div class="stat-label"><span>앎 (Gnosis)</span></div>
+
+                  <div class="stat-bar-bg">
+                    <div
+                      id="bar-gnosis"
+                      class="stat-bar-fill bg-gnosis"
+                      style="width: 0%"
+                    ></div>
+                  </div>
+
+                  <span id="val-gnosis">0/100</span>
+                </div>
+
+                <!--현재 상태 란 추가-->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= Right Panel: Status & Logs ================= -->
+      <div class="panel-right">
+         <!-- Progress -->
+          <div class="progress-section stat-row" style="max-height: 10%; min-width: 100%;">
+            <br>
+            <div class="stat-header prog-label" style="font-weight: 600; color: #ffffff;">
+              진행도</span>
+            </div>
+            <div class="stat-bar-bg">
+              <div
+                id="bar-progress"
+                class="stat-bar-fill bg-progress"
+                style="width: 0%"
+              ></div>
+            </div><div style="color: rgb(255, 255, 255);">
+              <span id="val-progress">0%</span></div>
+          </div>
+        
+
+        <!-- Choices Container -->
+        <div id="choices-container" class="choices-container">
+          <!-- Buttons will be injected here by JS -->
+        </div>
+      </div>
+    
+    </div>
+<div class="portrait-container">
+      <!--포트레이트가 여기에 들어갑니다-->
+       <div
+              id="portrait-leviathan"
+              class="portrait-container portrait-lev"
+            ></div>
+            <div
+              id="portrait-enoch"
+              class="portrait-container portrait-enoch"
+            ></div>
+    </div>
+    <!-- js 파일 연결 -->
+    <script src="script.js"></script>
+  </body>
+</html>
